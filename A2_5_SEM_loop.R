@@ -264,6 +264,17 @@ write.csv(bigsummary1, file = paste0(outdir,"SEM4loop_bigsummary1.csv"))
 write.csv(bigsummary2, file = paste0(outdir,"SEM4loop_bigsummary2.csv"))
 
 
+#--------------------------------------------------------------------------------------------
+#Printing Figures (run manually)
+#--------------------------------------------------------------------------------------------
+
+
+# datatype <- 2 # Change as required
+# thisdrop <- 1 # Manually run from 1 to nsub
+## May need to change into SEM directory to find file easily
+# dotFilename<-paste0('forgrViz_SEM',datatype,'_',thisdrop,'.dot')
+# grViz(dotFilename)
+
 
 
 
