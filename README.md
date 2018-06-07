@@ -9,4 +9,7 @@ Data saved on Dropbox\Project A2\A2_Data
 
 Project preregistered on OSF: https://osf.io/tkpm2/
 
-Also see SEM simulation files and draft scripts: https://github.com/oscci/explore_Dopp_methods
+See also:
+
+SEM simulation files and draft scripts: https://github.com/oscci/laterality_simulations
+SEM exploration scripts: https://github.com/oscci/explore_Dopp_methods
