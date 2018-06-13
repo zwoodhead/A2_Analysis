@@ -286,7 +286,7 @@ for (mysub in c(1:30)){
       if(initialdatacheck==1) #set initialdatacheck to zero to avoid plotting
       {  myplotbit <- myepoched[mym, , ,1]
         #first plot the old values with no correction
-        myylim <- range(na.omit(c(range(mybit[,1]),range(myplotbit[,2]))))
+        myylim <- range(c(range(na.omit(myplotbit[,1])),range(na.omit(myplotbit[,2]))))
         
         plot(timeline+premarker,myplotbit[,1],type="n",xlab='time (secs)',ylab='velocity',ylim=myylim)
         lines(timeline+premarker,myplotbit[,1],col="red")
