@@ -20,10 +20,10 @@ initialdatacheck=0; #set to 1 toview raw data for each epoch
 initialdatacheck1=0; # set to 1 to view epochs after normalisation
 initialdatacheck2=0; #set to 1 to view epochs after heartbeat Correction
 initialdatacheck3=0; # set to 1 to visualise after baseline correction
-initialdatacheck4=1; # set to 1 to plot AND SAVE average for each subject
+initialdatacheck4=0; # set to 1 to plot AND SAVE average for each subject
 
 # Timings in secs
-premarker=-7 # rest start
+premarker=-7 # epoch start
 basestart=-5 # baseline start
 baseend=2 # baseline end
 postmarker=27 # end of epoch ### TESTING - WAS 28
@@ -51,9 +51,15 @@ trialsperrun=15
 ########################################################
 # Specify subject (mysubname)
 
-subjects <- c("001","002","003","004","005","006","007","008","009","010",
-              "011","012","013","014","015","016","017","019","020",
-              "021","022","023","024","025","026","027","028","029","030","031")
+all_subjects <- c("001","002","003","004","005","006","007","008","009","010",
+              "011","012","013","014","015","016","017","019","020","021",
+              "022","023","024","025","026","027","028","029","030","031",
+              "032","033","034","035","036","037","038", "039")
+
+participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep="")
+rh_subjects <- which(participant_info$handedness=="R")
+subjects <- all_subjects[rh_subjects]
+
 for (mysub in c(1:30)){ 
   mysubname <- subjects[mysub]
   
@@ -576,7 +582,7 @@ for (mysub in c(1:30)){
     line <- readline()
     
     png(filename=paste0(dir,"LI_Plots/LI_Plot_",mysubname,"_",task,session,".png"))
-    
+
     plot(timelinelong,Lmean, type="n",ylab='mean blood flow',xlab='time(s)',ylim=c(90,120)) #set up plot - doesn't actually plot anything
     lines(timelinelong,Lmean,col='red')
     lines(timelinelong,Rmean,col='blue')
@@ -589,7 +595,7 @@ for (mysub in c(1:30)){
     text(-4,105,'blue=R\n red=L\n black=(L-R) +100',cex=.75)
     mytitle=paste(mysubname,paste("Task ", task, session, sep = ""))
     title(mytitle)
-    
+
     dev.off()
     }
     
@@ -606,7 +612,7 @@ for (mysub in c(1:30)){
     averageddata <- data.frame("Sent_L" = Lmean,
                                "Sent_R" = Rmean)
     
-    # Print averaged epoch data to file
+    # # Print averaged epoch data to file
     if(length(keepmarkers)>=8){
       mymeanLR<-data.frame(matrix(ncol=5,nrow=mypts)) ###TESTING WAS 801
       mymeanLR[,1]<-as.integer(mysub)
