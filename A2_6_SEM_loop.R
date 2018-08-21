@@ -22,11 +22,11 @@ library(semPlot)
 # 3 = Peak L-R diff, median of all trials
 # 4 = Mean L-R diff, median of all trials
 
-datatype <- 4 #as.numeric(readline("Which data type? 1=peak, 2=mean, 3=median peak, 4=median mean:   "))
+datatype <- 2 #as.numeric(readline("Which data type? 1=peak, 2=mean, 3=median peak, 4=median mean:   "))
 dir<-("C:/Users/zwoodhead/Dropbox/Project A2/A2_Data/")
 outdir <- paste0(dir,'SEM',datatype)
 
-nsub <- 30 #change this when all data are collected
+nsub <- 30 
 
 
 ##########################################################################
@@ -72,10 +72,10 @@ twofactor <- data.frame(
 )
 
 # Create new text file to cat to
-cat(paste0("SEM",datatype," Loop Summary\n\n"), file = "SEM4loop.txt", append = FALSE)
+cat(paste0("SEM",datatype," Loop Summary\n\n"), file = "loop.txt", append = FALSE)
 
 # Read in template for grViz
-mybit<-read.csv('for_graphviz.csv',stringsAsFactors = FALSE,header=FALSE) #full list of all paths.
+mybit<-read.csv(paste0(dir,'for_graphviz.csv'),stringsAsFactors = FALSE,header=FALSE) #full list of all paths.
 
 #------------------------------------------------------------------
 #This bit of script was used at the start of OpenMx in case we wanted to try 'drop one' approach
