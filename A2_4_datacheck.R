@@ -18,10 +18,10 @@ dir<-("C:/Users/zwoodhead/Dropbox/Project A2/A2_Data/")
 # 3 = Peak L-R diff, median of all trials
 # 4 = Mean L-R diff, median of all trials
 
-LI_stats <- matrix(data=NA, 8, 12)
-rownames(LI_stats) <- c('data1_w', 'data1_p', 'data2_w', 'data2_p', 'data3_w', 'data3_p', 'data4_w', 'data4_p')
+LI_stats <- matrix(data=NA, 4, 12)
+rownames(LI_stats) <- c('data1_w', 'data1_p', 'data2_w', 'data2_p')
 
-for (d in 1:4){
+for (d in 1:2){
 
 
 ########################################################
