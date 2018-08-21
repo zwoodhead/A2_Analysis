@@ -68,11 +68,12 @@ for (p in 1:nsub){
 ########################################################
 # Outliers are defined based on the standard error across trials.
 # LI values more than 2.2 times the difference between the first and third quartiles (2.2 * (Q3-Q1)) 
-# below or above the first and third quartile values are classed as outliers
-# (e.g: lower limit = Q1 – 2.2*(Q3-Q1); upper limit = Q3 + 2.2*(Q3-Q1)). 
+# above the third quartile values are classed as outliers
+# (e.g: upper limit = Q3 + 2.2*(Q3-Q1)). 
 
 # The limits are based on data from ALL tasks
 allse<-vector()
+
 for (t in 1:6){
   allse<-c(allse,LI_data[,(t+14)])
 }
@@ -81,14 +82,10 @@ lower_quartile <- quantile(allse, probs=0.25, na.rm="TRUE")
 upper_quartile <- quantile(allse, probs=0.75, na.rm="TRUE")
 quartile_diff <- upper_quartile - lower_quartile
 
-lower_limit <- lower_quartile - 2.2*quartile_diff
 upper_limit <- upper_quartile + 2.2*quartile_diff
 
 for (t in 1:6){
   for (p in 1:(nsub)){
-    if (is.na(LI_data_clean[p, t+2]) == 0 & LI_data[p, t+14] < lower_limit) { # For LI values lower than lower limit
-      exclusions[p, t+2] <- 2
-    } 
     if (is.na(LI_data_clean[p, t+2]) == 0 & LI_data[p, t+14] > upper_limit) { # For LI values higher than upper limit
       exclusions[p, t+2] <- 2
       }
