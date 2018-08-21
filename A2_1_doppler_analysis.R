@@ -56,7 +56,7 @@ all_subjects <- c("001","002","003","004","005","006","007","008","009","010",
               "022","023","024","025","026","027","028","029","030","031",
               "032","033","034","035","036","037","038", "039")
 
-participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep="")
+participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep=",")
 rh_subjects <- which(participant_info$handedness=="R")
 subjects <- all_subjects[rh_subjects]
 

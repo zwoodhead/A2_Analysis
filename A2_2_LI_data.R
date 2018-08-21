@@ -32,7 +32,7 @@ if (datatype < 3){
 ########################################################
 # Select right handers only
 
-participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep="")
+participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep=",")
 
 rh_subjects <- which(participant_info$handedness=="R")
 

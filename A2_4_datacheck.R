@@ -10,6 +10,7 @@ library(xlsx) #install.packages(c("xlsx","dplyr"))
 require(dplyr)
 
 dir<-("C:/Users/zwoodhead/Dropbox/Project A2/A2_Data/")
+
 ########################################################
 # Loop through four different datatypes 
 #
