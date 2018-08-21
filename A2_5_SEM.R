@@ -27,14 +27,14 @@ datatype <- as.numeric(readline("Which data type? 1=peak, 2=mean, 3=median peak,
 
 outdir <- paste0(dir,'SEM',datatype)
 
-nsub <- 30 #change this when all data are collected
+nsub <- 30 
 
 
 ##########################################################################
 # Read in data
 # NB. Need to set working directory to location of data files - or else specify path
 
-alltask <- read.csv(paste0(dir,'C:/Users/zwoodhead/Dropbox/Project A2/A2_Data/LI_data', datatype, '.csv'))
+alltask <- read.csv(paste0(dir,'LI_data', datatype, '.csv'))
 alltask <- cbind(alltask[1:nsub, 3:8], alltask[(nsub+1):(nsub*2), 3:8]) # Reshape into 12 columns
 
 mylabels<-c('ListGen1','PhonDec1','SemDec1','SentGen1','SentComp1','Jabber1',
