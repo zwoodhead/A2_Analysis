@@ -89,13 +89,13 @@ for (t in 1:6){
   
   # plot labels (* p<.05, ** p <.005)
   if      (as.numeric(LI_stats[4,t*2-1]) < 0.005) {
-    LI_stats[6,t*2-1] <- "**"}
+    LI_stats[6,t*2-1] <- "***"}
   
   else if (as.numeric(LI_stats[4,t*2-1]) > 0.05) {
     LI_stats[6,t*2-1] <- ""}
   
-  if      (as.numeric(LI_stats[4,t*2]) < 0.005) {
-    LI_stats[6,t*2] <- "**"}
+  if      (as.numeric(LI_stats[4,t*2]) < 0.001) {
+    LI_stats[6,t*2] <- "***"}
   
   else if (as.numeric(LI_stats[4,t*2]) > 0.05) {
     LI_stats[6,t*2] <- ""}  
@@ -117,11 +117,12 @@ LI_long <- melt(LI_data_clean)
 colnames(LI_long) <- c("ID","Session","Task", "LI_value")
 
 # Make pirate plot
+png(filename=paste0(dir,"Figures/PiratePlot_",datatype,".png"))
 pirateplot(formula = LI_value ~ Session + Task,
            data = LI_long,
            ylab = "LI Value",
            main = "Pirate Plot of LI Values",
-           ylim = c(-7.5, 10.5))
+           ylim = c(-3, 7))
 
 # Mark significant differences (excluding outlier data) with black astrisks
 text(xmarker_nums, y=as.numeric(LI_stats[5,1:12]), labels=LI_stats[6,1:12],font=2, cex=1.3)
@@ -129,7 +130,7 @@ text(xmarker_nums, y=as.numeric(LI_stats[5,1:12]), labels=LI_stats[6,1:12],font=
 # Mark outlier values as red dots
 points(outlier_markers, y=outlier_values, type = "p", pch = 16, col="red")
 
-
+dev.off()
 
 
 
