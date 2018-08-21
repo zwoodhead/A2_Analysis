@@ -16,7 +16,6 @@ library("ggplot2")
 
 datatype <- as.numeric(readline("Which data type? 1=peak, 2=mean, 3=median peak, 4=median mean:   "))
 dir<-("C:/Users/zwoodhead/Dropbox/Project A2/A2_Data/")
-outdir <- paste0(dir,'SEM',datatype)
 
 nsub <- 30 #change this when all data are collected
 
@@ -64,7 +63,6 @@ for (t in 1:12){
   alltask[which(exclusions[ , t] > 0), t] = NA # Change excluded values to NA
 }
 
-
 ##########################################################################
 # Create correlation matrix
 
@@ -79,10 +77,10 @@ upper_tri <- get_upper_tri(cormat)
 
 melted_cormat <- melt(upper_tri,na.rm=T)
 
-
 ##########################################################################
 # Create correlation heatmap using ggplot
 
+png(filename=paste0(dir,"Figures/CorrMatrix_",datatype,".png"))
 ggheatmap <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
   geom_tile(colour = "white")+
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
@@ -110,15 +108,14 @@ ggheatmap +
   guides(fill = guide_colorbar(barwidth = 9, barheight = 1.5,
                                title.position = "top", title.hjust = 0.5))
 
-
-
+dev.off()
 
 ### Extra Plot
 
-plot(alltask[,1:2], type='n', ylim = c(-4,5), xlim=c(.5, 2.5), axes=FALSE, ann=FALSE)
-
-for (s in 1:nsub){lines(alltask[s,1:2], type='b', pch=1, lty=1, lwd=.5)}
-axis(1, at=1:2, labels=c('Session1', 'Session2'), tick=FALSE)
-
-axis(2, at=-4:5, lwd=2)
-abline(h=-4, lwd=2)
+# plot(alltask[,1:2], type='n', ylim = c(-4,5), xlim=c(.5, 2.5), axes=FALSE, ann=FALSE)
+# 
+# for (s in 1:nsub){lines(alltask[s,1:2], type='b', pch=1, lty=1, lwd=.5)}
+# axis(1, at=1:2, labels=c('Session1', 'Session2'), tick=FALSE)
+# 
+# axis(2, at=-4:5, lwd=2)
+# abline(h=-4, lwd=2)
