@@ -27,8 +27,22 @@ if (datatype < 3){
   mydata1 <- read.xlsx(paste0(dir,"Results_Session1.xlsx"), sheetIndex = 1)
   mydata2 <- read.xlsx(paste0(dir,"Results_Session2.xlsx"), sheetIndex = 1)
   
-  nsub <- dim(mydata2)[1]
 }
+
+########################################################
+# Select right handers only
+
+participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep="")
+
+rh_subjects <- which(participant_info$handedness=="R")
+
+mydata1 <- mydata1[rh_subjects, ]
+mydata2 <- mydata2[rh_subjects, ]
+
+nsub <- dim(mydata2)[1]
+
+########################################################
+# Select LI data
 
 # Datatype 1 == Peak LI values
 if (datatype ==1){
