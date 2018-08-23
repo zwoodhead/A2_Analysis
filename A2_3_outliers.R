@@ -39,31 +39,6 @@ exclusions  <- data.frame(
   "E"       = rep(0, nsub),
   "F"       = rep(0, nsub))
 
-# Mark tasks with < 12 useable trials as excluded
-# NB: Only do this for averaged trial data! (Datatypes 1 and 2)
-if (datatype < 3){
-for (p in 1:nsub){
-  for (t in 1:6){
-    if (LI_data[p, t+8] < 12){
-      exclusions[p, t+2] <- 1
-    }
-  }
-}
-}
-
-
-# Change excluded trial data to NA before identifying Hoaglin Iglewicz outliers:
-
-LI_data_clean <- LI_data[ , 1:8]
-
-for (p in 1:nsub){
-  for (t in 1:6){
-    if (exclusions[p, t+2] == 1){
-      LI_data_clean[p, t+2] = NA
-    }
-  }
-}
-
 
 ########################################################
 # Outliers are defined based on the standard error across trials.
@@ -72,8 +47,7 @@ for (p in 1:nsub){
 # (e.g: upper limit = Q3 + 2.2*(Q3-Q1)). 
 
 # The limits are based on data from ALL tasks
-allse<-vector()
-
+allse<-vector() # start with an empty vector
 for (t in 1:6){
   allse<-c(allse,LI_data[,(t+14)])
 }
@@ -86,9 +60,21 @@ upper_limit <- upper_quartile + 2.2*quartile_diff
 
 for (t in 1:6){
   for (p in 1:(nsub)){
-    if (is.na(LI_data_clean[p, t+2]) == 0 & LI_data[p, t+14] > upper_limit) { # For LI values higher than upper limit
+    if (is.na(LI_data[p, t+2]) == 0 & LI_data[p, t+14] > upper_limit) { # For LI values higher than upper limit
       exclusions[p, t+2] <- 2
       }
+  }
+}
+
+# Mark tasks with < 12 useable trials as excluded
+# NB: Only do this for averaged trial data! (Datatypes 1 and 2)
+if (datatype < 3){
+  for (p in 1:nsub){
+    for (t in 1:6){
+      if (LI_data[p, t+8] < 12){
+        exclusions[p, t+2] <- 1
+      }
+    }
   }
 }
 
