@@ -20,7 +20,6 @@ nsub <- 30
 dir<-("C:/Users/zwoodhead/Dropbox/Project A2/A2_Data/")
 datatype <- as.numeric(readline("Which data type? 1=peak, 2=mean, 3=median peak, 4=median mean:   "))
 
-
 LI_data_all <- read.csv(paste0(dir,"LI_data",datatype,".csv"))
 LI_data_all <- LI_data_all[,1:8]
 LI_data_all$ID <- as.factor(LI_data_all$ID)
@@ -59,7 +58,7 @@ for (p in 1:(nsub*2)){
 # Test whether LI values are normally distributed, and which LI means are significantly different to zero
 LI_stats <- matrix(data=NA, 7, 12)
 LI_stats[6,] <- rep("*",12)
-rownames(LI_stats) <- c('shapiro_w', 'shapiro_p', 'wilcox_V', 'wilcox_p', 'label_height', 'label', 'n')
+rownames(LI_stats) <- c('shapiro_w', 'shapiro_p', 'ttest_t', 'ttest_p', 'label_height', 'label', 'n')
 colnames(LI_stats) <- c("A1","A2","B1","B2","C1","C2","D1","D2","E1","E2","F1","F2")
 
 for (t in 1:6){
@@ -75,13 +74,13 @@ for (t in 1:6){
   LI_stats[2,2*t-1] <- round(shapiro.test(Session1)$p.value, 5)
   LI_stats[2,2*t]   <- round(shapiro.test(Session2)$p.value, 5)
     
-  # Wilcoxon test W statistics
-  LI_stats[3,2*t-1] <- round(wilcox.test(Session1)$statistic, 3)
-  LI_stats[3,2*t]   <- round(wilcox.test(Session2)$statistic, 3)
+  # T test t statistics
+  LI_stats[3,2*t-1] <- round(t.test(Session1)$statistic, 3)
+  LI_stats[3,2*t]   <- round(t.test(Session2)$statistic, 3)
   
-  # Wilcoxon test p values
-  LI_stats[4,2*t-1] <- round(wilcox.test(Session1)$p.value, 5)
-  LI_stats[4,2*t]   <- round(wilcox.test(Session2)$p.value, 5)
+  # T test p values
+  LI_stats[4,2*t-1] <- round(t.test(Session1)$p.value, 5)
+  LI_stats[4,2*t]   <- round(t.test(Session2)$p.value, 5)
   
   # plot label height (data max + 1)
   LI_stats[5,t*2-1] <- max(Session1, na.rm=TRUE) + 1
