@@ -130,6 +130,8 @@ text(xmarker_nums, y=as.numeric(LI_stats[5,1:12]), labels=LI_stats[6,1:12],font=
 # Mark outlier values as red dots
 points(outlier_markers, y=outlier_values, type = "p", pch = 16, col="red")
 
+abline(h=0)
+
 dev.off()
 
 
