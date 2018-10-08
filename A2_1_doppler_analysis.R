@@ -57,8 +57,6 @@ all_subjects <- c("001","002","003","004","005","006","007","008","009","010",
               "032","033","034","035","036","037","038", "039")
 
 participant_info <- read.csv(paste0(dir,"A2_Participant_Info.csv"), sep=",")
-rh_subjects <- which(participant_info$handedness=="R")
-subjects <- all_subjects[rh_subjects]
 
 for (mysub in c(1:30)){ 
   mysubname <- subjects[mysub]
@@ -66,7 +64,6 @@ for (mysub in c(1:30)){
   cat(mysubname, "\n\n")
   
   for (session in 1:2){
-    
     
     ########################################################
     # Read in Triallist and Results
@@ -83,7 +80,7 @@ for (mysub in c(1:30)){
     triallist$Filename<-as.character(triallist$Filename) # unfactor these columns to avoid later difficulties
     
     # Read Results file
-    resultsloc <- paste(dir,"Results_Session",session,".xlsx",sep='') # File lists analysis results
+    resultsloc <- paste(dir,"Results_Session",session,".csv",sep='') # File lists analysis results
     results <- read.xlsx(resultsloc,sheetIndex = 1)
     
     for (t in 1:6) 
@@ -627,8 +624,7 @@ for (mysub in c(1:30)){
     }
     
     # Print results file
-    
-    write.xlsx(results, resultsloc,sheetName="Sheet1",  row.names=FALSE)
+    write.csv(results, resultsloc, row.names=FALSE)
     
     } # End loop through tasks
   } # End loop through sessions
