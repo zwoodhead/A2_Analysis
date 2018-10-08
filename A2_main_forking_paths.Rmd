@@ -12,7 +12,6 @@ always_allow_html: yes
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-
 ```
 
 `r Sys.time()`
@@ -57,29 +56,27 @@ library(rsvg)
 library(knitr)
 
 ########### Set toggles before running! ################################################################
-RHonly            <- 0 # Set to 0 if want to include L handers
-Init30only        <- 1 # Set to 1 to include just the initial preregistered group (23 R and 7 L hander)
-#removesubs       <- c(10,22,26,28) #specific IDs to remove; set to zero to remove none
-removesubs        <- 0
-run_participants  <- 1 # Set to 1 to calculate age and gender stats of participant group
-run_behavioural   <- 1 # Set to 1 to analyse behavioural data
-usemean           <- 0 # Set to 0 to analyse original peak-based LI values
-remove.Ntrial     <- 1 # Set to 1 to run exclusion of those with < 12 good trials
-tryreorder        <- 1 # Set to 1 to change the fixed path in the SEM model
-run_normalcheck   <- 1 # Set to 1 to run normality tests on LI data
-run_pirate        <- 1 # Set to 1 to run pirate plot of LI data
-do_corrheat       <- 1 # Set to 1 to run correlation matrix heatmap plot
-run_pathdrop      <- 1 # Set to 1 to run pathdrop SEM analysis
-run_covexplore    <- 1 # Set to 1 to run covariance exploration analysis
-run_drawpaths     <- 1 # Set to 1 to run graphviz paths plot
-run_dropone       <- 1 # Set to 1 to run drop-one SEM analysis
-run_facscores     <- 1 # Set to 1 to run factor scores plot after drop one analysis (N.B. Only runs is run_dropone is also 1)
+RHonly            <- 0 # Set to 0 if want to include L handers. MANUSCRIPT = 0; PREREGISTRATION = 0
+Init30only        <- 0 # Set to 1 to include just the initial preregistered group (23 R and 7 L hander). MANUSCRIPT = 0; PREREGISTRATION = 1
+#removesubs       <- c(10,23,27,29)  
+removesubs        <- 0 # Set to 1 to remove specific participants. MANUSCRIPT = 0; PREREGISTRATION = 0
+if (removesubs == 1){ removesubs <- c(10, 23, 27, 29)} #specific participant rows to remove.
+run_participants  <- 1 # Set to 1 to calculate age and gender stats of participant group. MANUSCRIPT = 1; PREREGISTRATION = 1
+run_behavioural   <- 1 # Set to 1 to analyse behavioural data. MANUSCRIPT = 1; PREREGISTRATION = 1
+usemean           <- 1 # Set to 0 to analyse original peak-based LI values. MANUSCRIPT = 1; PREREGISTRATION = 0
+remove.Ntrial     <- 1 # Set to 1 to run exclusion of those with < 12 good trials. MANUSCRIPT = 1; PREREGISTRATION = 1
+tryreorder        <- 1 # Set to 1 to change the fixed path in the SEM model. MANUSCRIPT = 1; PREREGISTRATION = 0
+run_normalcheck   <- 1 # Set to 1 to run normality tests on LI data. MANUSCRIPT = 1; PREREGISTRATION = 1
+run_pirate        <- 1 # Set to 1 to run pirate plot of LI data. MANUSCRIPT = 1; PREREGISTRATION = 1
+do_corrheat       <- 1 # Set to 1 to run correlation matrix heatmap plot. MANUSCRIPT = 1; PREREGISTRATION = 1
+run_dropone       <- 1 # Set to 1 to run drop-one SEM analysis. MANUSCRIPT = 1; PREREGISTRATION = 1
+run_facscores     <- 1 # Set to 1 to run factor scores plot after drop one analysis (N.B. Only runs if run_dropone is also 1). MANUSCRIPT = 1; PREREGISTRATION = 1
 
 nuorder           <-   # Sets the new order of tasks. The task listed first (and seventh) will be fixed.
-  c(1,2,3,4,5,6,7,8,9,10,11,12) # List generation fixed
+#  c(1,2,3,4,5,6,7,8,9,10,11,12) # List generation fixed
 # c(3,1,2,4,5,6,9,7,8,10,11,12) # Semantic decision fixed
 # c(2,1,3,4,5,6,8,7,9,10,11,12) # Phonological decision fixed
-# c(4,1,2,3,5,6,10,7,8,9,11,12) # Sentence generation fixed
+ c(4,1,2,3,5,6,10,7,8,9,11,12) # Sentence generation fixed
 # c(5,1,2,3,4,6,11,7,8,9,10,12) # Sentence comprehension fixed
 # c(6,1,2,3,4,5,12,7,8,9,10,11) # Jabberwocky decision fixed
 tabcount         <- 0  #Start of counter for tables in Results section
@@ -107,7 +104,6 @@ particdat$handcode<-2
 particdat$handcode[rhanded]<-1
 #Handcode needed when numeric value used for colour in plots
 
-
 if (Init30only==1) {# original sample from prereg analysis
   print('First 30 subjects only included in analysis')
   particdat<-particdat[1:30,]
@@ -120,10 +116,11 @@ if (RHonly==1){ #See RHonly toggle
 if (removesubs>0){
 particdat<-particdat[-removesubs,] #NB defined by row number, NOT subject ID
 }
+
 if(run_participants==1){ #See run_participants toggle
   #Participant descriptors reported in paper
   print('Gender x handedness')
- print( table(particdat$Gender,particdat$handedness))
+  print( table(particdat$Gender,particdat$handedness))
   ageyr<-particdat$Age_m/12
   print('Age in yr')
   print(summary(ageyr))
@@ -139,14 +136,17 @@ if(run_participants==1){ #See run_participants toggle
 if (run_behavioural==1){ #See run_behavioural toggle
   
   behavdat<-read.csv('A2_Behavioural_Data.csv')
-  behavdat<-behavdat[particdat$ID,] #need to remove one S who is in this file but not tested
   
- #NB Do not need to specify exclusions by sample or handedness here.
+  # Only include participants in particdat
+  behavdat <- behavdat[
+    which(is.element(behavdat$Filename, particdat$ID)), ]
+
+  #NB Do not need to specify exclusions by sample or handedness here.
   #Participant ID has already incorporated there
   
   #word data
   word.cols<-grep('*.Words',colnames(behavdat))
- tab1a<- stargazer(behavdat[,word.cols],type='text')
+  tab1a<- stargazer(behavdat[,word.cols],type='text')
   
   #accuracy data
   acc.cols<-grep('*.Acc', colnames(behavdat))
@@ -159,9 +159,14 @@ if (run_behavioural==1){ #See run_behavioural toggle
   stargazer(behavdat[,rt.cols],type='text')
   
   #omit data
-  omit.cols<-grep('*.Omit',colnames(behavdat))
+  omit.cols<- grep('*.Omit',colnames(behavdat))
   print('Omit')
   stargazer(behavdat[,omit.cols],type='text')
+  #hack to ignore tasks A and D
+  omit.cols <- omit.cols[5:length(omit.cols)]
+  omit.data <- behavdat[ , omit.cols]
+  nevents <- c(90,90,90,45,90,90,90,45) # The number of events in each condition
+
  
   #Table now just includes tasks with % accurate and RT.
   #N words from tasks A and D are reported in main text
@@ -170,17 +175,18 @@ if (run_behavioural==1){ #See run_behavioural toggle
   behavdf<-data.frame(matrix(NA,nrow=4,ncol=10))
   colnames(behavdf)<-c('% Correct.1','% Correct.2','t','p','RT.1','RT.2','t','p','% Omitted.1','% Omitted.2')
  
-  #get means and SDs for word responses
-    mymeanw<-round(sapply(behavdat[,word.cols],mean,na.rm=TRUE),1)
+  #get means and SDs for word responses for tasks A and D
+  mymeanw<-round(sapply(behavdat[,word.cols],mean,na.rm=TRUE),1)
   mysdw<-round(sapply(behavdat[,word.cols],sd,na.rm=TRUE),2)
+  #get means and SDs for accuracy and RT for tasks B, C, E and F
   mymeanp<-round(sapply(behavdat[,acc.cols],mean,na.rm=TRUE),1)
   mysdp<-round(sapply(behavdat[,acc.cols],sd,na.rm=TRUE),2)
   mymeanr<-round(sapply(behavdat[,rt.cols],mean,na.rm=TRUE),2)
   mysdr<-round(sapply(behavdat[,rt.cols],sd,na.rm=TRUE),2)
-    mymeano<-round(sapply(behavdat[,omit.cols],mean,na.rm=TRUE),2)
-  mysdo<-round(sapply(behavdat[,omit.cols],sd,na.rm=TRUE),2)
+  # get percentage of omitted trials for tasks B, C, E and F
+  mymeano <- round(colSums(omit.data, na.rm=TRUE) / (nevents*nrow(omit.data)) * 100, 2)
   
-    for (i in 1:4){
+  for (i in 1:4){
     
     behavdf[i,1]<-paste0(mymeanp[i],' (',mysdp[i],')')
     behavdf[i,2]<-paste0(mymeanp[(i+4)],' (',mysdp[i+4],')')
@@ -202,19 +208,20 @@ if (run_behavioural==1){ #See run_behavioural toggle
 ```
 
 ```{r behavaov}
-  #Do Anova on words for tasks A and D - need long form file
+#Do Anova on words for tasks A and D - need long form file
 #Output from the aov is incorporated in the text for methods
-  nsub<-nrow(behavdat)
-  subvec<-rep(1:nsub,4)
-  wordvec<-c(behavdat$A1.Words,behavdat$A2.Words,behavdat$D1.Words,behavdat$D2.Words)
-  taskvec<-c(rep(1,nsub*2),rep(0,nsub*2))
-  timevec<-c(rep(1,nsub),rep(2,nsub),rep(1,nsub),rep(2,nsub))
-  word.df<-data.frame(cbind(subvec,wordvec,taskvec,timevec))
-  colnames(word.df)<-c('sub','word','task','time')
-  word.df$sub<-as.factor(word.df$sub)
-  myaov<-summary(aov(word~(task*time)+ Error(sub/(task*time)),data=word.df))
-  task.aov <-unlist(myaov$'Error: sub:task')
-  session.aov <-unlist(myaov$'Error: sub:time')
+
+nsub<-nrow(behavdat)
+subvec<-rep(1:nsub,4)
+wordvec<-c(behavdat$A1.Words,behavdat$A2.Words,behavdat$D1.Words,behavdat$D2.Words)
+taskvec<-c(rep(1,nsub*2),rep(0,nsub*2))
+timevec<-c(rep(1,nsub),rep(2,nsub),rep(1,nsub),rep(2,nsub))
+word.df<-data.frame(cbind(subvec,wordvec,taskvec,timevec))
+colnames(word.df)<-c('sub','word','task','time')
+word.df$sub<-as.factor(word.df$sub)
+myaov<-summary(aov(word~(task*time)+ Error(sub/(task*time)),data=word.df))
+task.aov <-unlist(myaov$'Error: sub:task')
+session.aov <-unlist(myaov$'Error: sub:time')
 ```
 
 ##Code for reading and reshaping LI data
@@ -226,10 +233,8 @@ N.B. Can select to use original LI values based on peak, or LI values from mean 
 
 data1<-read.csv('Results_Session1.csv')
 data2<-read.csv('Results_Session2.csv')
-data1<-data1[particdat$ID,]
-data2<-data2[particdat$ID,]
-
-
+data1<-data1[which(is.element(data1$Filename, particdat$ID)), ]
+data2<-data2[which(is.element(data2$Filename, particdat$ID)), ]
 
 alltaskall <- cbind(select(data1,A1.LI,B1.LI,C1.LI,D1.LI,E1.LI,F1.LI),
              select(data2,A2.LI,B2.LI,C2.LI,D2.LI,E2.LI,F2.LI))
@@ -246,11 +251,8 @@ myshortlab<-c('ListGen','PhonDec','SemDec','SentGen','SentComp','Jabber')
 mylonglab <-c('List Generation','Phonological Decision','Semantic Decision',
               'Sentence Generation','Sentence Comprehension','Syntactic Decision')
 
-
 colnames(alltaskall)<-mylabels
 head(alltaskall)
-
-
 
 ```
 
@@ -270,8 +272,6 @@ if (usemean==1){ #See usemean toggle
   allse <- cbind(select(data1,A1.mean_se,B1.mean_se,C1.mean_se,D1.mean_se,E1.mean_se,F1.mean_se),
                  select(data2,A2.mean_se,B2.mean_se,C2.mean_se,D2.mean_se,E2.mean_se,F2.mean_se))
 }
-
-
 
 myse<-c(allse[,1],allse[,2],allse[,3],allse[,4],allse[,5],allse[,6],
         allse[,7],allse[,8],allse[,9],allse[,10],allse[,11],allse[,12])
@@ -302,9 +302,9 @@ if (remove.Ntrial==1){ #See remove.Ntrial toggle
 
   dropN<-0 #initialise counter
   for (i in 1:6){
-    w<-which(colnames(data1)==nbit[i])
+    w<-which(colnames(data1) == nbit[i])
     ww<-which(data1[includesubs,w]<12)
-    if(length(ww>0)){
+    if(length(ww) >0){
       alltask[ww,i]<-NA
       dropN <- dropN + sum(data1[includesubs,w] < 12)
     }
@@ -314,7 +314,7 @@ if (remove.Ntrial==1){ #See remove.Ntrial toggle
   for (i in 1:6){
     w<-which(colnames(data2)==nbit[i])
     ww<-which(data2[includesubs,w]<12)
-    if(length(ww>0)){
+    if(length(ww)>0){
       alltask[ww,(i+6)]<-NA
       dropN <- dropN + sum(data2[includesubs,w] < 12)
     }
@@ -398,11 +398,9 @@ if (run_normalcheck==1){ # See run_normalcheck toggle
 }
 }
 ```
+
 ##Pirateplot
-This needs redoing!
-Ideally should code handedness as well as excluded points
-(Not sure how to do that!)
-NB current version does plot excluded points but does not distinguish them
+Produces a pirate plot of LI values with excluded datapoints marked in red.
 
 ```{r dopirate}
 myrow<-nrow(alltask)
@@ -430,10 +428,6 @@ if (run_pirate == 1){ # See run_pirate toggle
   # Melt cleverly reshapes LI_data into a long format using ID 
   # (the only factor) as the categorical variable    
   LI_long <- melt(alltaskall) #version with outliers 
-  
-  outliermark<-which(is.na(alltask))
-  
-  
   LI_long$ID<-rep(1:myrow,6)
   LI_long$Session<-c(rep(1,myrow*6),rep(2,myrow*6))
   long_task_list <- vector() # create an empty vector
@@ -444,10 +438,11 @@ if (run_pirate == 1){ # See run_pirate toggle
   #Need task code because otherwise pirate plot will order tasks alphabetically
   LI_long$Taskcode<-c(rep(c(rep('A',nsub),rep('B',nsub),rep('C',nsub),rep('D',nsub),
                       rep('E',nsub),rep('F',nsub)),2))
+  LI_long$handedness <- rep(particdat$handcode,12)
                       
   colnames(LI_long)[2]<-'LI'
   
-  png(filename="LIpirateA2.png", width=1500, height=1200,res=300)
+  png(filename="LIpirateA2.png", width=1500, height=1500,res=300)
 
   # Make pirate plot
   pirateplot(formula = LI ~ Session + Taskcode,
@@ -460,37 +455,54 @@ if (run_pirate == 1){ # See run_pirate toggle
   
   abline(h=0,lty=2)
   
+  # Index relating Task/Session conditions to points on the x axis
   xmarker_index <- data.frame(
     'x_nums' = c(1,2,4,5,7,8,10,11,13,14,16,17), # For plotting x-axis
     'task' = c('A','A','B','B','C','C','D','D','E','E','F','F'),
-    'session' = c(rep(c(1,2),6)))  
+    'session' = c(rep(c(1,2),6)))
   
+  # Mark left handers in red dots
+  lhmark <- which(LI_long$handedness==2)
+  nleft <- length(lhmark)
+  lh_markers <- numeric(length = nleft)
+  
+  if (nleft > 0){ # If the data includes some left handers...
+    for (m in 1:nleft){ # Figure out where to put the markers on the x-axis
+      lh_markers[m] <- xmarker_index$x_nums[
+        which(xmarker_index$task == LI_long$Taskcode[lhmark[m]]
+        & xmarker_index$session == LI_long$Session[lhmark[m]])]
+    }
+  }
+  
+ # points(lh_markers, LI_long$LI[which(LI_long$handedness==2)], type ='p', pch = 1, col='red')
+ 
+  
+  # Mark outlier values as red dots  
+  outliermark<-which(is.na(alltask))
   outlier_markers <- numeric(length=length(outliermark))
   outlier_values <- numeric(length=length(outliermark))
   for (o in 1:length(outliermark)){
-    outlier_markers[o] = xmarker_index$x_nums[which(xmarker_index$task == LI_long$Taskcode[outliermark[o]] 
+    outlier_markers[o] <- xmarker_index$x_nums[which(xmarker_index$task == LI_long$Taskcode[outliermark[o]] 
           & xmarker_index$session == LI_long$Session[outliermark[o]])]
     outlier_values[o] <- LI_long$LI[outliermark[o]]
   }
 
-  
-  # Mark significant differences (excluding outlier data) with black astrisks
-  text(xmarker_nums, y=as.numeric(tdf[,3]), labels=tdf[,4],font=2, cex=1.3)
-  
-  # Mark outlier values as red dots
   points(outlier_markers, y=outlier_values, type = "p", pch = 16, col="red")
 
+  
+  # Mark significant differences (excluding outlier data) with black astrisks
+  text(xmarker_index$x_nums, y=as.numeric(tdf[,3]), labels=tdf[,4],font=2, cex=1.3)
 
- dev.off()
+  dev.off()
 }
 
 
 ```
 
-![Pirate plot](LIpirateA2.png)
+![](LIpirateA2.png)
 
 
-##Correlation matrix as heatmap
+## Correlation matrix as heatmap
 ```{r corrheat}
 
 if (do_corrheat == 1){ # See do_corrheat toggle
@@ -529,7 +541,7 @@ if (do_corrheat == 1){ # See do_corrheat toggle
     coord_fixed()
   
   #add some formatting
-  ggheatmap + 
+  plot_format <- ggheatmap + 
     geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
     theme(
       axis.title.x = element_blank(),
@@ -544,11 +556,13 @@ if (do_corrheat == 1){ # See do_corrheat toggle
     guides(fill = guide_colorbar(barwidth = 9, barheight = 1.5,
                                  title.position = "top", title.hjust = 0.5))
   
+  print(plot_format)
   dev.off()
 }
 ```
 
-![Heatmap](heatmap.png)
+![](heatmap.png)
+
 ## Structural equation Models: 
 
 ```{r setupbigsummary}
@@ -1041,7 +1055,7 @@ facmod <- lm(alltask$f1score~alltask$f2score)
 alltask$cookdist <- cooks.distance(facmod)
 plot(alltask$cookdist,col=particdat$handcode,pch=16)
 w<-which(alltask$cookdist>(4*mean(alltask$cookdist)))
-print('Influential points are:')
+print('Influential points are:') # These values are ROW NUMBERS not PARTICIPANT IDs
 w
 alltask$bivoutlier <-0
 alltask$bivoutlier[w] <-1
@@ -1230,7 +1244,7 @@ sessionInfo()
 
 <!-- Next chunks taken from manuscript --> 
 ## Behavioural results
-We did not have specific predictions for the behavioural results, but present them here for completeness. For the List Generation and Sentence Generation tasks (tasks A - List Generation and D - Sentence Generation), the number of words spoken per trial was recorded. The number of words spoken in both tasks and sessions were very similar: For task A, session 1, mean = `r mymeanw[1]`, SD = `r mysdw[1]`, session 2, mean = `r mymeanw[3]`, SD = `r mysdw[3]`; For task D, session 1, mean = `r mymeanw[2]`, SD = `r mysdw[2]`, session 2, mean = `r mymeanw[4]`, SD = `r mysdw[4]`. A repeated measures ANOVA showed no significant effects of task: F(`r round(task.aov[1],0)`,`r round(task.aov[2],0)`) = `r round(task.aov[7],2)`, *p* = `r round(task.aov[9],3)`, or session: F(`r round(session.aov[1],0)`,`r round(session.aov[2],0)`) = `r round(session.aov[7],2)`, *p* = `r round(session.aov[9],3)` on the number of words spoken. Trials where participants failed to respond, or responded too early were excluded from analysis: these constituted less than 0.1% of trials.
+We did not have specific predictions for the behavioural results, but present them here for completeness. For the List Generation and Sentence Generation tasks (tasks A - List Generation and D - Sentence Generation), the number of words spoken per trial was recorded. The number of words spoken in both tasks and sessions were very similar: For task A, session 1, mean = `r mymeanw[1]`, SD = `r mysdw[1]`, session 2, mean = `r mymeanw[3]`, SD = `r mysdw[3]`; For task D, session 1, mean = `r mymeanw[2]`, SD = `r mysdw[2]`, session 2, mean = `r mymeanw[4]`, SD = `r mysdw[4]`. A repeated measures ANOVA showed no significant effects of task (F(`r round(task.aov[1],0)`,`r round(task.aov[2],0)`) = `r round(task.aov[7],2)`, *p* = `r round(task.aov[9],3)`), but there was a significant effect of session (F(`r round(session.aov[1],0)`,`r round(session.aov[2],0)`) = `r round(session.aov[7],2)`, *p* = `r round(session.aov[9],3)`) on the number of words spoken. Trials where participants failed to respond, or responded too early were excluded from analysis: these constituted less than 0.1% of trials.
 
 For the remaining tasks, performance was assessed in terms of percentage trials correct and reaction time (RT). Table `r (tabcount+1)` shows mean (SD) for both sessions.
 
@@ -1254,7 +1268,7 @@ The Phonological Decision and Sentence Comprehension tasks (tasks B and E) showe
 The Hoaglin Iglewicz procedure identified `r dropSEword` outlier LI values where the standard error across trials was above the upper cut-off. There were a further `r dropNword` occasions where data was excluded because a subject had less than twelve useable trials for a given task in a given session. The remaining data for these participants were retained in the analysis. Excluded datapoints are shown as red dots in Figure 5. 
 
 `r figcount<-figcount+1` 
-Figure `r figcount` **TO BE REDONE** shows the distribution of LIs as a pirate plot (Phillips, 2017), which shows individual data-points as well as the mean and distribution of scores. Task D (Sentence Generation) showed the strongest left lateralisation. Shapiro-Wilks normality tests showed that LI values for `r n.nonnormal.text` non-normally distributed. One sample t-tests (testing for mean > 0) showed that all conditions were significantly left lateralised, except task F (Syntactic Decision) at Sessions 1 (p = `r tdf$p[11]`) and 2 (p = `r tdf$p[12]`).
+Figure `r figcount` shows the distribution of LIs as a pirate plot (Phillips, 2017), which shows individual data-points as well as the mean and distribution of scores. Task D (Sentence Generation) showed the strongest left lateralisation. Shapiro-Wilks normality tests showed that LI values for `r n.nonnormal.text` non-normally distributed. One sample t-tests (testing for mean > 0) showed that all conditions were significantly left lateralised, except task F (Syntactic Decision) at Sessions 1 (p = `r tdf$p[11]`) and 2 (p = `r tdf$p[12]`).
 
 
 ![*Figure `r figcount`. Pirate plot showing the raw data for LI values for all tasks (A-F) and for both sessions (blue = Session1, pink = Session2). Raw datapoints are shown in grey. The black lines show the mean, and the shaded areas show the smoothed densities. Asterisks show results of one sample t-tests comparing the LI values of the group to zero (omitting excluded datapoints, shown in red) (* p < .05, ** p < .01, *** p < .001).*](LIpirateA2.png)
@@ -1305,6 +1319,7 @@ It can be seen that List Generation has only a weak loading on Factor 1, whereas
 
 
 ![*Figure `r figcount`. Correlation between two factors from bifactor model, with left-handers shown in red, and bivariate outliers as circles*](factorplot_fixSentGen.png)
+
 In our original analysis with just 30 participants, a similar factor structure was observed, but there was a concern that this depended solely on a single left-handed participant (See Supplementary Material). With the larger sample of 37 participants, the bifactor solution was superior in all runs of a leave-one out analysis. The bifactor model was also the best-fitting model when only the 30 right-handers were included in the analysis. Nevertheless, it is clear from Figure `r figcount` that the two factors are highly intercorrelated, and the impression is that the factor solution is heavily affected by some influential cases. Cook's distance was computed to identify four bivariate outliers, which are marked with different symbols in Figure `r figcount`. Three of the outliers were left-handers and one was a right-hander. When the analysis was re-run omitting these cases, the single factor model gave a better fit in all but one run of a leave-one-out analysis. 
 
 
