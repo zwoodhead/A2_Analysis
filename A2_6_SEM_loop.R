@@ -58,17 +58,17 @@ colnames(bigsummary2)<-c('CFI','RMSEA','BIC','Comment')
 
 # Set up table of results from Factor Models
 singlefactor <- data.frame(
-  name = c("l2","l3","l4","l5","l6","e1","e2","e3","e4","e5","e6","e11","e12","e13","e14","e15","e16","varFactor1","meanA","meanB","meanC","meanD","meanE","meanF"),
-  matrix = c("A","A","A","A","A","S","S","S","S","S","S","S","S","S","S","S","S","S","M","M","M","M","M","M"),
-  from = c("PD1","SD1","SG1","SC1","JD1",  "LD1","PD1","SD1","SG1","SC1","JD1",  "LD2","PD2","SD2","SG2","SC2","JD2",  "F1",1,1,1,1,1,1),
-  to = c("F1","F1","F1","F1","F1","LD1","PD1","SD1","SG1","SC1","JD1",  "LD2","PD2","SD2","SG2","SC2","JD2", "F1", "LD1","PD1","SD1","SG1","SC1","JD1")
+  name =   c("l2","l3","l4","l5","l6","e1","e2","e3","e4","e5","e6","varFactor1","meanA","meanB","meanC","meanD","meanE","meanF"),
+  matrix = c("A","A","A","A","A","S","S","S","S","S","S","S","M","M","M","M","M","M"),
+  from = c("PD1","SD1","SG1","SC1","JD1",  "LD1","PD1","SD1","SG1","SC1","JD1",  "F1",1,1,1,1,1,1),
+  to = c("F1","F1","F1","F1","F1","LD1","PD1","SD1","SG1","SC1","JD1","F1", "LD1","PD1","SD1","SG1","SC1","JD1")
 )
 
 twofactor <- data.frame(
-  name = c("k2","k3","k4","k5","k6","l2","l3","l4","l5","l6", "e1","e2","e3","e4","e5","e6","e11","e12","e13","e14","e15","e16","varFactor1","meanA","meanB","meanC","meanD","meanE","meanF"),
-  matrix = c("A","A","A","A","A","A","A","A","A","A","S","S","S","S","S","S","S","S","S","S","S","S","S","M","M","M","M","M","M"),
-  from = c("PD1","SD1","SG1","SC1","JD1","PD1","SD1","SG1","SC1","JD1",  "LD1","PD1","SD1","SG1","SC1","JD1",  "LD2","PD2","SD2","SG2","SC2","JD2",  "F1",1,1,1,1,1,1),
-  to = c("F1","F1","F1","F1","F1","F2","F2","F2","F2","F2","LD1","PD1","SD1","SG1","SC1","JD1",  "LD2","PD2","SD2","SG2","SC2","JD2", "F1", "LD1","PD1","SD1","SG1","SC1","JD1")
+  name = c("k2","k3","k4","k5","k6","l2","l3","l4","l5","l6", "e1","e2","e3","e4","e5","e6","varFactor1","meanA","meanB","meanC","meanD","meanE","meanF"),
+  matrix = c("A","A","A","A","A","A","A","A","A","A","S","S","S","S","S","S","S","M","M","M","M","M","M"),
+  from = c("PD1","SD1","SG1","SC1","JD1","PD1","SD1","SG1","SC1","JD1",  "LD1","PD1","SD1","SG1","SC1","JD1","F1",1,1,1,1,1,1),
+  to = c("F1","F1","F1","F1","F1","F2","F2","F2","F2","F2","LD1","PD1","SD1","SG1","SC1","JD1", "F1", "LD1","PD1","SD1","SG1","SC1","JD1")
 )
 
 # Create new text file to cat to
@@ -97,13 +97,14 @@ for (thisdrop in 1:30){   #specify a number for participant to be dropped
 # -----------------------------------------------------------------------
 
 # residual variances
-resVars      <- mxPath( from=mylabels, arrows=2,
-                        free=c(T,T,T,T,T,T,T,T,T,T,T,T), values=c(1,1,1,1,1,1,1,1,1,1,1,1),
-                        labels=c("e1","e2","e3","e4","e5","e6","e11","e12","e13","e14","e15","e16") ) # variances can vary at each task/session
+  resVars      <- mxPath( from=mylabels, arrows=2,
+                          free=c(T,T,T,T,T,T,T,T,T,T,T,T), values=c(1,1,1,1,1,1,1,1,1,1,1,1),
+                          labels=c("e1","e2","e3","e4","e5","e6","e1","e2","e3","e4","e5","e6") ) # variances are fixed for task/session
 
 # latent variance - Factor1 is the single factor
 latVar       <- mxPath( from="Factor1", arrows=2,
                         free=TRUE, values=1, labels ="varFactor1" )
+
 # factor loadings
 facLoads     <- mxPath( from="Factor1", to=mylabels, arrows=1,
                         free=c(FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE), 
@@ -141,12 +142,11 @@ bigsummary1[thisdrop,] <- c(myCFI,myrmsea,BICF1,paste0("Single Factor, dropping 
 # residual variances
 resVars      <- mxPath( from=mylabels, arrows=2,
                         free=c(T,T,T,T,T,T,T,T,T,T,T,T), values=c(1,1,1,1,1,1,1,1,1,1,1,1),
-                        labels=c("e1","e2","e3","e4","e5","e6","e11","e12","e13","e14","e15","e16") ) # variances can vary at each task/session
+                        labels=c("e1","e2","e3","e4","e5","e6","e1","e2","e3","e4","e5","e6") ) # variances are fixed at each task/session
 
 # latent variances and covariance: NB assume totally independent, so covariance fixed at zero
 latVars      <- mxPath( from=c("Factor1","Factor2"), arrows=2, connect="unique.pairs",
                         free=c(T,F,F), values=c(1,0,1), labels=c("varFactor1","cov","varFactor2") )
-#changed the free statement from free =c(T,T,T) (that was error in prereg script: gives underidentified model)
 
 # factor loadings for Factor1 #NB test A loading is fixed to one for this factor
 facLoadsFactor1     <- mxPath( from="Factor1", to=mylabels, arrows=1,
@@ -249,7 +249,7 @@ colnames(singlefactor) <- c('name','matrix','from','to',
                             'Mean_drop16','SE_drop16','Mean_drop17','SE_drop17','Mean_drop18','SE_drop18','Mean_drop19','SE_drop19','Mean_drop20','SE_drop20',
                             'Mean_drop21','SE_drop21','Mean_drop22','SE_drop22','Mean_drop23','SE_drop23','Mean_drop24','SE_drop24','Mean_drop25','SE_drop25',
                             'Mean_drop26','SE_drop26','Mean_drop27','SE_drop27','Mean_drop28','SE_drop28','Mean_drop29','SE_drop29','Mean_drop30','SE_drop30')
-write.csv(singlefactor, file = paste0(outdir,"SEM4loop_parameters1.csv"))
+write.csv(singlefactor, file = paste0(outdir,"loop_parameters1.csv"))
 
 colnames(twofactor) <- c('name','matrix','from','to',
                             'Mean_drop1','SE_drop1','Mean_drop2','SE_drop2','Mean_drop3','SE_drop3','Mean_drop4','SE_drop4','Mean_drop5','SE_drop5',
@@ -258,10 +258,10 @@ colnames(twofactor) <- c('name','matrix','from','to',
                             'Mean_drop16','SE_drop16','Mean_drop17','SE_drop17','Mean_drop18','SE_drop18','Mean_drop19','SE_drop19','Mean_drop20','SE_drop20',
                             'Mean_drop21','SE_drop21','Mean_drop22','SE_drop22','Mean_drop23','SE_drop23','Mean_drop24','SE_drop24','Mean_drop25','SE_drop25',
                             'Mean_drop26','SE_drop26','Mean_drop27','SE_drop27','Mean_drop28','SE_drop28','Mean_drop29','SE_drop29','Mean_drop30','SE_drop30')
-write.csv(twofactor, file = paste0(outdir,"SEM4loop_parameters2.csv"))
+write.csv(twofactor, file = paste0(outdir,"loop_parameters2.csv"))
 
-write.csv(bigsummary1, file = paste0(outdir,"SEM4loop_bigsummary1.csv"))
-write.csv(bigsummary2, file = paste0(outdir,"SEM4loop_bigsummary2.csv"))
+write.csv(bigsummary1, file = paste0(outdir,"loop_bigsummary1.csv"))
+write.csv(bigsummary2, file = paste0(outdir,"loop_bigsummary2.csv"))
 
 
 #--------------------------------------------------------------------------------------------
