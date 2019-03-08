@@ -534,7 +534,7 @@ for (mysub in c(1:30)){
     for (m in 1:myN)
     {indLI=c(indLI,mean(finalepochs[m,mypeakrange,1]-finalepochs[m,mypeakrange,2]))
     inddiff <- finalepochs[m,rangestart:rangeend,1] - finalepochs[m,rangestart:rangeend,2]
-    indLI_mean =c(indLI,mean(inddiff))
+    indLI_mean =c(indLI_mean,mean(inddiff))
     }
     
     # SE for peak LI
